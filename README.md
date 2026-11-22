@@ -48,4 +48,6 @@ Django administration: `/admin/`
 
 The deployment uses environment variables for `SECRET_KEY` and the database connection. Do not commit the local SQLite database or secrets.
 
+To create the first administrator, set `BOOTSTRAP_ADMIN_USERNAME` and `BOOTSTRAP_ADMIN_PASSWORD` in the Render service environment and trigger a deploy. Use a password of at least 14 characters. The build creates a superuser with global administrator access only if that username does not already exist; it never resets an existing account. After the deploy succeeds, remove both bootstrap variables from Render.
+
 For other production hosts, configure PostgreSQL through `DATABASE_URL` or `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, and `DB_PORT`; set a secure `SECRET_KEY`, set `DEBUG=False`, and configure `ALLOWED_HOSTS`.
