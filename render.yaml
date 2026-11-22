@@ -1,0 +1,24 @@
+databases:
+  - name: starlight-restaurant-db
+    plan: free
+    databaseName: starlight
+    user: starlight
+
+services:
+  - type: web
+    name: starlight-restaurant
+    runtime: python
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: starlight-restaurant-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: RENDER
+        value: true

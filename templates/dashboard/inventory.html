@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="heading"><div><h1>Inventory</h1><div class="muted">Live stock balance is calculated from recorded movements.</div></div><div class="actions"><a class="btn" href="{% url 'receive_stock' %}">Receive Stock</a><a class="btn secondary" href="{% url 'issue_stock' %}">Issue Stock</a><a class="btn secondary" href="{% url 'adjust_stock' %}">Adjust Stock</a><a class="btn secondary" href="{% url 'transfer_stock' %}">Stock Transfer</a></div></div>
+<table><thead><tr><th>SKU</th><th>Product</th><th>Branch</th><th>Section</th><th>Balance</th><th>Min</th><th>Unit</th></tr></thead><tbody>{% for product,balance in rows %}<tr><td>{{ product.sku }}</td><td>{{ product.name }}</td><td>{{ product.section.branch.name }}</td><td><span class="pill">{{ product.section.get_name_display }}</span></td><td><b>{{ balance }}</b></td><td>{{ product.minimum_stock }}</td><td>{{ product.get_unit_display }}</td></tr>{% empty %}<tr><td colspan="7" class="empty">No products available.</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

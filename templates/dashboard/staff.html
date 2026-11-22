@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="heading"><div><h1>Staff</h1><div class="muted">Employees within your permitted sections.</div></div>{% if can_manage_staff %}<a class="btn" href="{% url 'create_employee' %}">Create Employee</a>{% endif %}</div>
+<table><thead><tr><th>Employee No.</th><th>Name</th><th>Position</th><th>Branch</th><th>Section</th><th>Phone</th></tr></thead><tbody>{% for e in employees %}<tr><td>{{ e.employee_number }}</td><td>{{ e.first_name }} {{ e.last_name }}</td><td>{{ e.position }}</td><td>{{ e.branch.name }}</td><td>{{ e.section.get_name_display }}</td><td>{{ e.phone|default:'—' }}</td></tr>{% empty %}<tr><td colspan="6" class="empty">No active employees.</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

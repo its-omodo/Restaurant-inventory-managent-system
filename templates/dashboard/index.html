@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="heading">
+  <div><h1>Dashboard</h1><div class="muted">Live operational view for your permitted branches and sections · {{ month_label }}</div></div>
+  <div class="actions"><a class="btn" href="{% url 'record_sale' %}">Record Sale</a>{% if request.user.has_global_access or request.user.role == 'RGM' %}<a class="btn secondary" href="{% url 'set_sales_budget' %}">Set Sales Budget</a>{% endif %}</div>
+</div>
+
+<div class="cards sales-cards">
+  <div class="card"><h3>Current Sales · Today</h3><div class="metric">KES {{ current_sales|floatformat:2 }}</div><div class="muted">{{ current_transaction_count }} transactions today · latest 12 shown below</div></div>
+  <div class="card"><h3>MTD Sales · Excluding Today</h3><div class="metric">KES {{ mtd_sales|floatformat:2 }}</div><div class="muted">1st through yesterday</div></div>
+  <div class="card"><h3>Monthly Sales Budget</h3><div class="metric">KES {{ budget_total|floatformat:2 }}</div><div class="muted">{{ month_label }}</div></div>
+  <div class="card"><h3>Staff Currently Present</h3><div class="metric">{{ present_staff|length }}</div><div class="muted">Clocked in with no clock-out</div></div>
+</div>
+
+<div class="dashboard-grid">
+  <section class="section-card wide">
+    <div class="section-head"><div><h2>Sales vs Budget</h2><p class="muted">Cumulative sales through yesterday compared with the straight-line monthly budget pace.</p></div><div class="legend"><span><i class="dot actual"></i> Actual MTD</span><span><i class="dot budget"></i> Budget pace</span></div></div>
+    {% if graph_points %}
+    <div class="line-chart-wrap">
+      <svg viewBox="0 0 900 300" class="line-chart" role="img" aria-label="Cumulative MTD sales against budget">
+        <line x1="55" y1="255" x2="880" y2="255" class="axis"/><line x1="55" y1="25" x2="55" y2="255" class="axis"/>
+        <polyline points="{{ budget_polyline }}" class="series budget-line" fill="none"/>
+        <polyline points="{{ actual_polyline }}" class="series actual-line" fill="none"/>
+        {% for p in graph_points %}<circle cx="{{ p.x }}" cy="{{ p.budget_y }}" r="2.5" class="point budget-point"/><circle cx="{{ p.x }}" cy="{{ p.actual_y }}" r="3" class="point actual-point"/>{% endfor %}
+      </svg>
+      <div class="chart-labels">{% for p in graph_points %}{% if forloop.first or forloop.last or forloop.counter|divisibleby:7 %}<span>{{ p.label }}</span>{% endif %}{% endfor %}</div>
+    </div>
+    {% else %}<div class="empty">No completed days in this month yet. The graph will populate after the first day closes.</div>{% endif %}
+  </section>
+
+  <section class="section-card">
+    <div class="section-head"><div><h2>Current Stock Level</h2><p class="muted">Product count by stockhold status.</p></div></div>
+    <div class="gauges">
+      <div class="gauge-box critical"><div class="gauge" style="--pct: {{ stock_gauges.critical.pct }}%"><div><strong>{{ stock_gauges.critical.count }}</strong><small>Critical</small></div></div><div class="gauge-label">At/below minimum</div></div>
+      <div class="gauge-box healthy"><div class="gauge" style="--pct: {{ stock_gauges.healthy.pct }}%"><div><strong>{{ stock_gauges.healthy.count }}</strong><small>Healthy</small></div></div><div class="gauge-label">Within stockhold</div></div>
+      <div class="gauge-box above"><div class="gauge" style="--pct: {{ stock_gauges.above.pct }}%"><div><strong>{{ stock_gauges.above.count }}</strong><small>Above</small></div></div><div class="gauge-label">Above maximum</div></div>
+    </div>
+  </section>
+
+  <section class="section-card wide">
+    <div class="section-head"><div><h2>Current Sales Transactions</h2><p class="muted">Today’s transactions, newest first.</p></div><a class="btn secondary small" href="{% url 'record_sale' %}">Record Sale</a></div>
+    <div class="table-scroll"><table><thead><tr><th>Time</th><th>Reference</th><th>Branch</th><th>Section</th><th>Amount</th></tr></thead><tbody>{% for tx in current_transactions %}<tr><td>{{ tx.transaction_time|date:"H:i:s" }}</td><td>{{ tx.transaction_ref }}</td><td>{{ tx.branch.name }}</td><td>{{ tx.section.get_name_display }}</td><td>KES {{ tx.amount|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="5" class="empty">No sales transactions recorded today.</td></tr>{% endfor %}</tbody></table></div>
+  </section>
+
+  <section class="section-card">
+    <div class="section-head"><div><h2>Staff Currently Present</h2><p class="muted">People clocked in for the current day.</p></div></div>
+    <div class="table-scroll"><table><thead><tr><th>Staff</th><th>Section</th><th>Station</th><th>Clock In</th></tr></thead><tbody>{% for row in present_staff %}<tr><td><b>{{ row.employee.first_name }} {{ row.employee.last_name }}</b><br><span class="muted">{{ row.employee.position }}</span></td><td>{{ row.employee.section.get_name_display }}</td><td>{{ row.station }}</td><td>{{ row.clock_in|date:"H:i" }}</td></tr>{% empty %}<tr><td colspan="4" class="empty">No staff are currently clocked in.</td></tr>{% endfor %}</tbody></table></div>
+  </section>
+</div>
+
+<div class="grid"><div class="section-card"><h2>Sections</h2><p class="muted">Chicken and Pizza remain separate operating sections inside each branch.</p>{% for section in sections %}<div style="padding:12px 0;border-bottom:1px solid var(--line)"><span class="pill {% if section.name == 'CHICKEN' %}chicken{% else %}pizza{% endif %}">{{ section.get_name_display }}</span> <a href="{% url 'section_detail' section.id %}">{{ section.branch.name }}</a></div>{% empty %}<div class="empty">No sections assigned.</div>{% endfor %}</div><div class="section-card"><h2>Quick Actions</h2><div class="actions" style="margin-top:15px"><a class="btn" href="{% url 'receive_stock' %}">Receive Stock</a><a class="btn secondary" href="{% url 'issue_stock' %}">Issue Stock</a><a class="btn secondary" href="{% url 'adjust_stock' %}">Adjust Stock</a><a class="btn secondary" href="{% url 'transfer_stock' %}">Stock Transfer</a><a class="btn secondary" href="{% url 'create_purchase_request' %}">Purchase Request</a></div></div></div>
+{% endblock %}
+
+<script>
+  // Keep the operational dashboard fresh without requiring staff to reload it manually.
+  window.setTimeout(function () { window.location.reload(); }, 30000);
+</script>

@@ -1,0 +1,48 @@
+
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page_title|default:"Dashboard" }} · Starlight Restaurant</title>
+<style>
+:root{--nav:#1a102d;--nav2:#2d1b4a;--bg:#f5efe7;--card:#fffdfb;--text:#1a102d;--muted:#665678;--line:#e7d9b8;--accent:#d4a94f;--accent-strong:#b6801d;--green:#3a7d4d;--red:#b64545;--soft-purple:#efe7ff}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f8f3ea 0%,#f3ecff 100%);color:var(--text)}
+.layout{display:flex;min-height:100vh}.sidebar{width:255px;background:linear-gradient(180deg,#1a102d 0%,#120a1b 100%);color:#fff;position:fixed;inset:0 auto 0 0;overflow:auto}.brand{padding:23px 20px;border-bottom:1px solid #ffffff18}.brand b{font-size:19px}.brand small{display:block;color:#d8c7f9;margin-top:4px}
+.nav{padding:15px 12px}.nav a{display:block;color:#eadfff;text-decoration:none;padding:11px 13px;border-radius:8px;margin:3px 0}.nav a:hover,.nav a.active{background:rgba(212,169,79,0.18);color:#fff}.nav .group{font-size:11px;color:#cab7eb;text-transform:uppercase;padding:15px 13px 6px;letter-spacing:.08em}
+.main{margin-left:255px;width:calc(100% - 255px)}.topbar{height:70px;background:rgba(255,255,255,0.84);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:5}.user{display:flex;gap:12px;align-items:center}.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#1a102d,#d4a94f);color:#fff;display:grid;place-items:center;font-weight:700}
+.content{padding:28px;max-width:1450px;margin:auto}.heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.heading h1{margin:0;font-size:27px}.muted{color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 6px 18px rgba(26,16,45,0.04)}.card h3{margin:0 0 8px;font-size:14px;color:var(--muted);font-weight:600}.metric{font-size:30px;font-weight:750}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:20px}
+.section-card{background:#fffdfb;border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 6px 18px rgba(26,16,45,0.04)}.section-card h2{margin:0 0 6px}.pill{display:inline-block;padding:5px 9px;border-radius:99px;background:#f4eedb;font-size:12px}.pill.chicken{background:#f9f0d9}.pill.pizza{background:#efe7ff}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}th,td{text-align:left;padding:13px 15px;border-bottom:1px solid var(--line);font-size:14px}th{background:#f5efe7;color:#544a64;font-size:12px;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:0}.btn{display:inline-block;border:0;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#fff;text-decoration:none;padding:10px 14px;font-weight:650;cursor:pointer;box-shadow:0 6px 18px rgba(212,169,79,0.25)}.btn.secondary{background:#efeaf9;color:#2f1d49}.toolbar{display:flex;gap:10px;justify-content:space-between;margin-bottom:16px}.search{padding:10px 13px;border:1px solid var(--line);border-radius:8px;width:280px;background:#fff}.empty{padding:35px;text-align:center;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn.green{background:linear-gradient(135deg,#4d8e68,#2d6848)}.btn.red{background:linear-gradient(135deg,#c76363,#9f3d3d)}.btn.small{padding:7px 10px;font-size:12px}.form-card{background:#fffdfb;border:1px solid var(--line);border-radius:12px;padding:24px;max-width:760px;box-shadow:0 6px 18px rgba(26,16,45,0.04)}.field{margin-bottom:17px}.field label{display:block;font-weight:650;margin-bottom:7px}.input,select,input[type=text],input[type=email],input[type=number],input[type=password],textarea{width:100%;padding:10px 12px;border:1px solid #d9caad;border-radius:8px;font:inherit;background:#fff}.field small{display:block;color:var(--muted);margin-top:5px}.field-error{color:var(--red);font-size:13px;margin-top:5px}.alert{padding:12px 14px;border-radius:8px;margin-bottom:15px}.alert.success{background:#edf7ef;color:#335f40}.alert.error{background:#fceae8;color:#8d3b3b}.status{font-weight:650}.status.SUBMITTED{color:#9a5a00}.status.APPROVED{color:var(--green)}.status.REJECTED{color:var(--red)}
+.dashboard-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-top:20px}.wide{grid-column:auto}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:15px}.section-head h2{margin:0 0 5px}.legend{display:flex;gap:12px;white-space:nowrap;font-size:12px;color:var(--muted)}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.dot.actual{background:var(--accent)}.dot.budget{background:#7b6d8b}.line-chart-wrap{overflow:hidden}.line-chart{width:100%;min-width:620px;height:300px}.axis{stroke:#e9deca;stroke-width:1}.series{stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.actual-line{stroke:var(--accent)}.budget-line{stroke:#7b6d8b;stroke-dasharray:7 6}.point{stroke:#fff;stroke-width:1.5}.actual-point{fill:var(--accent)}.budget-point{fill:#7b6d8b}.chart-labels{display:flex;justify-content:space-between;padding:4px 25px 0 55px;color:var(--muted);font-size:11px}.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.gauge-box{text-align:center}.gauge{--pct:0%;width:110px;height:110px;margin:5px auto 8px;border-radius:50%;background:conic-gradient(currentColor var(--pct),#f0e8dc 0);display:grid;place-items:center}.gauge:after{content:"";position:absolute}.gauge>div{width:76px;height:76px;border-radius:50%;background:#fff;display:grid;place-items:center;align-content:center}.gauge strong{font-size:25px}.gauge small{display:block;color:var(--muted);font-size:11px}.gauge-box.critical{color:#b64545}.gauge-box.healthy{color:#3a7d4d}.gauge-box.above{color:#b9891a}.gauge-label{font-size:12px;color:var(--muted)}.table-scroll{overflow:auto}.sales-cards .card{min-height:105px}.sales-cards .muted{font-size:12px;margin-top:4px}
+@media(max-width:900px){.dashboard-grid{grid-template-columns:1fr}.wide{grid-column:auto}.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px)}.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.sidebar{position:static;width:100%;height:auto}.layout{display:block}.main{margin-left:0;width:100%}.nav{display:flex;flex-wrap:wrap}.nav .group{width:100%}.topbar{position:static}.cards,.grid{grid-template-columns:1fr}.content{padding:18px}.toolbar{display:block}.search{width:100%;margin-bottom:10px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+<div class="brand"><b>Starlight Restaurant</b><small>{{ request.user.get_role_display }}</small></div>
+<nav class="nav">
+<div class="group">Overview</div>
+<a href="{% url 'dashboard' %}" class="{% if page_title == 'Dashboard' %}active{% endif %}">Dashboard</a>
+<div class="group">Operations</div>
+<a href="{% url 'inventory' %}" class="{% if page_title == 'Inventory' %}active{% endif %}">Inventory</a>
+<a href="{% url 'staff' %}" class="{% if page_title == 'Staff' %}active{% endif %}">Staff</a>
+<a href="{% url 'purchasing' %}" class="{% if page_title == 'Purchasing' %}active{% endif %}">Purchasing</a>
+<div class="group">Management</div>
+<a href="{% url 'reports' %}" class="{% if page_title == 'Reports' %}active{% endif %}">Reports</a>
+{% if request.user.has_global_access %}<a href="{% url 'audit_logs' %}" class="{% if page_title == 'Audit Log' %}active{% endif %}">Audit Log</a>{% endif %}
+{% if request.user.is_staff %}<a href="/admin/">System Administration</a>{% endif %}
+</nav>
+</aside>
+<section class="main">
+<header class="topbar">
+<div><b>{{ page_title|default:"Dashboard" }}</b></div>
+<div class="user"><span>{{ request.user.get_full_name|default:request.user.username }}</span><span class="avatar">{{ request.user.username|first|upper }}</span></div>
+</header>
+<main class="content">{% if messages %}{% for message in messages %}<div class="alert {% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</div>{% endfor %}{% endif %}{% block content %}{% endblock %}</main>
+</section>
+</div>
+</body>
+</html>

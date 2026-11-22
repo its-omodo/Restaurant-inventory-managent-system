@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="heading"><div><h1>Purchasing</h1><div class="muted">Create and review purchase requests.</div></div><a class="btn" href="{% url 'create_purchase_request' %}">Create Purchase Request</a></div>
+<table><thead><tr><th>Date</th><th>Branch</th><th>Section</th><th>Requested By</th><th>Items</th><th>Status</th><th>Action</th></tr></thead><tbody>{% for r in requests %}<tr><td>{{ r.created_at|date:'d M Y H:i' }}</td><td>{{ r.branch.name }}</td><td>{{ r.section.get_name_display }}</td><td>{{ r.requested_by.username }}</td><td>{% for item in r.items.all %}{{ item.product.name }} × {{ item.quantity }}{% if not forloop.last %}, {% endif %}{% endfor %}</td><td><span class="status {{ r.status }}">{{ r.get_status_display }}</span></td><td>{% if can_approve and r.status == 'SUBMITTED' %}<a class="btn small" href="{% url 'approve_purchase' r.id %}">Review</a>{% else %}—{% endif %}</td></tr>{% empty %}<tr><td colspan="7" class="empty">No purchase requests.</td></tr>{% endfor %}</tbody></table>
+{% endblock %}
